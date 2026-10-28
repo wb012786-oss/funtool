@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>脑洞进化战 - Absurd Evolution Arena</title>
+  <link rel="stylesheet" href="css/tailwind.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div class="max-w-6xl mx-auto p-4 md:p-6">
+    <!-- Header -->
+    <header class="text-center mb-6">
+      <h1 class="text-3xl md:text-5xl font-black bg-gradient-to-r from-violet-400 via-pink-400 to-rose-400 bg-clip-text text-transparent">
+        脑洞进化战
+      </h1>
+      <p class="text-slate-400 mt-2 text-sm md:text-base">无限合成 · 进化树 · 战斗 · AI生成</p>
+      
+      <!-- 次数显示 -->
+      <div class="mt-4 inline-flex items-center gap-3 bg-slate-800/80 rounded-full px-5 py-2 text-sm">
+        <span>今日剩余次数：</span>
+        <span id="remainCount" class="font-bold text-emerald-400 text-lg">8</span>
+        <button onclick="watchAd()" style="display:none" class="ml-2 px-3 py-1 rounded-full bg-amber-600 hover:bg-amber-500 text-xs font-medium">
+          看广告+5次
+        </button>
+      </div>
+
+      <!-- 签到 / 每日挑战 / 连胜 -->
+      <div id="dailyBar" class="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs"></div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- 左侧：合成 + 进化 -->
+      <div class="lg:col-span-4 space-y-5">
+        <!-- 合成区 -->
+        <section class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5">
+          <h2 class="text-lg font-bold text-violet-300 mb-4 flex items-center gap-2">
+            <span>🧪</span> 合成实验室
+          </h2>
+          
+          <div class="space-y-3">
+            <input id="inputA" type="text" placeholder="第一个概念（猫 / 火焰 / 996...）" 
+                   class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 focus:border-violet-500 focus:outline-none text-sm" />
+            <div class="text-center text-slate-500 text-xl">+</div>
+            <input id="inputB" type="text" placeholder="第二个概念" 
+                   class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 focus:border-violet-500 focus:outline-none text-sm" />
+            
+            <button id="btnCombine" onclick="doCombine()" 
+                    class="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 font-bold text-base transition active:scale-95">
+              生成生物（消耗1次）
+            </button>
+          </div>
+
+          <!-- 结果区 -->
+          <div id="resultBox" class="mt-5 hidden">
+            <div id="creatureCard" class="bg-slate-800 rounded-xl p-4 border border-slate-600"></div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+              <button onclick="addToCollection()" class="py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm font-medium">加入收藏</button>
+              <button onclick="showEvolutionPanel()" class="py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-sm font-medium">查看进化</button>
+            </div>
+            <button onclick="openPoster()" class="mt-3 w-full py-2.5 rounded-lg bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-sm font-bold">
+              📸 生成分享海报（发抖音/小红书）
+            </button>
+          </div>
+        </section>
+
+        <!-- AI 内容声明 -->
+        <div class="text-xs text-slate-500 text-center px-2">
+          本站生物的文字与图片均由 AI 生成，仅供娱乐
+        </div>
+      </div>
+
+      <!-- 中间：生物库 -->
+      <div class="lg:col-span-4">
+        <section class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5">
+          <h2 class="text-lg font-bold text-cyan-300 mb-4 flex items-center gap-2">
+            <span>📦</span> 我的生物库
+          </h2>
+          <div id="collectionList" class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+            <p class="text-slate-500 text-sm text-center py-8">还没有生物，先去合成一个吧</p>
+          </div>
+        </section>
+
+        <!-- 成就 / 图鉴 -->
+        <section class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5 mt-5">
+          <h2 class="text-lg font-bold text-emerald-300 mb-3 flex items-center gap-2">
+            <span>🏆</span> 成就
+          </h2>
+          <div id="achievePanel"></div>
+        </section>
+      </div>
+
+      <!-- 右侧：战斗 + 进化树 -->
+      <div class="lg:col-span-4 space-y-5">
+        <!-- 战斗区 -->
+        <section class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5">
+          <h2 class="text-lg font-bold text-rose-300 mb-4 flex items-center gap-2">
+            <span>⚔️</span> 战斗竞技场
+          </h2>
+          
+          <select id="fighterSelect" class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-600 text-sm mb-3"></select>
+          
+          <button onclick="startBattle()" class="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 font-bold text-sm mb-4">
+            开始随机对战
+          </button>
+
+          <div id="battleBox" class="hidden">
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <div id="battleMe" class="bg-slate-800 rounded-lg p-3 text-center text-sm"></div>
+              <div id="battleEnemy" class="bg-slate-800 rounded-lg p-3 text-center text-sm"></div>
+            </div>
+            <div id="battleLog" class="bg-slate-950 rounded-lg p-3 text-xs h-40 overflow-y-auto space-y-1 mb-3"></div>
+            <div id="battleActions" class="grid grid-cols-3 gap-2 hidden">
+              <button onclick="battleAction('attack')" class="py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-sm">⚔️ 攻击</button>
+              <button id="btnSkill" onclick="battleAction('skill')" class="py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs">技能</button>
+              <button onclick="battleAction('defend')" class="py-2 rounded-lg bg-slate-600 hover:bg-slate-500 text-sm">🛡️ 防御</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 进化树预览 -->
+        <section class="bg-slate-900/80 border border-slate-700 rounded-2xl p-5">
+          <h2 class="text-lg font-bold text-amber-300 mb-3 flex items-center gap-2">
+            <span>🌳</span> 进化路线
+          </h2>
+          <div id="evoTree" class="text-sm text-slate-400 space-y-2">
+            <p>选择一个生物后这里会显示可进化路线</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- 进化弹窗 -->
+  <div id="evoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+    <div class="bg-slate-900 border border-slate-600 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
+      <h3 class="text-xl font-bold text-amber-300 mb-4">进化树</h3>
+      <div id="evoModalContent"></div>
+      <button onclick="closeEvoModal()" class="mt-5 w-full py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600">关闭</button>
+    </div>
+  </div>
+
+  <!-- 分享海报弹窗 -->
+  <div id="posterModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4">
+    <div class="bg-slate-900 border border-slate-600 rounded-2xl p-4 max-w-sm w-full max-h-[92vh] overflow-y-auto text-center">
+      <img id="posterImg" alt="分享海报" class="w-full rounded-xl" />
+      <p id="posterTip" class="text-xs text-slate-400 mt-3"></p>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <button onclick="Poster.download()" class="py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm font-medium">保存图片</button>
+        <button onclick="Poster.close()" class="py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 配置提示弹窗 -->
+  <div id="configTip" class="fixed bottom-4 right-4 bg-slate-800 border border-amber-500/50 rounded-xl p-4 text-xs max-w-xs shadow-xl z-40">
+    <div class="font-bold text-amber-400 mb-1">⚠️ 配置提醒</div>
+    <p class="text-slate-300">当前未接入 AI：请部署 <code class="text-pink-300">server/worker.js</code> 并在 <code class="text-pink-300">js/config.js</code> 填写 API_BASE（本地调试可临时填 Key）。</p>
+    <button onclick="this.parentElement.remove()" class="mt-2 text-slate-400 underline">知道了</button>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/ads.js"></script>
+  <script src="js/safety.js"></script>
+  <script src="js/llm.js"></script>
+  <script src="js/evolution.js"></script>
+  <script src="js/retention.js"></script>
+  <script src="js/poster.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      var ok = CONFIG.API_BASE || CONFIG.DEEPSEEK_API_KEY || CONFIG.TONGYI_API_KEY || CONFIG.IMAGE_API_KEY;
+      var tip = document.getElementById("configTip");
+      if (ok && tip) tip.remove();
+    })();
+  </script>
+</body>
+</html>
