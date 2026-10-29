@@ -7,7 +7,7 @@ const CONFIG = {
   // ========== 后端代理（线上必填） ==========
   // 部署 Worker 后填它的地址，例如 "https://funtool-api.你的子域名.workers.dev"
   // 留空 = 直连模式（仅本地调试用，Key 会暴露在前端）
-  API_BASE: "https://funtool-api.wb012786.workers.dev",
+  API_BASE: "https://api.funtool.dpdns.org",
 
   // ========== 以下仅【本地直连模式】使用，线上请保持为空 ==========
   DEEPSEEK_API_KEY: "",
@@ -33,7 +33,7 @@ const CONFIG = {
   // ========== 分享海报 ==========
   SITE_NAME: "脑洞进化战",
   SHARE_TEXT: "输入两个概念，AI 帮你合成一只离谱生物",
-  SHARE_URL: "",             // 上线后填你的访问地址，会印在海报底部
+  SHARE_URL: "https://funtool.dpdns.org",             // 上线后填你的访问地址，会印在海报底部
 
   // ========== 次数与广告 ==========
   DAILY_FREE_TIMES: 8,
