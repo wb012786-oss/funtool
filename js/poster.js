@@ -87,7 +87,7 @@ const Poster = {
 
     // 图片
     const img = await this.loadImage(c.image);
-    const ix = cx + 110, iy = cy + 40, is = cw - 220;
+    const ix = cx + 130, iy = cy + 40, is = cw - 260;
     ctx.save();
     this.roundRect(ctx, ix, iy, is, is, 28);
     ctx.clip();
@@ -130,19 +130,19 @@ const Poster = {
       ctx.fillText(s[0] + " " + s[1], x + sw / 2, y);
     });
 
-    // 技能
-    y += 66;
-    ctx.fillStyle = "#22d3ee"; ctx.font = "26px sans-serif";
-    ctx.fillText("技能：" + (c.skillName || "") + (c.skillDesc ? " - " + c.skillDesc : ""), W / 2, y);
+    // 技能（过长自动换行，最多 2 行）
+    y += 62;
+    ctx.fillStyle = "#22d3ee"; ctx.font = "24px sans-serif";
+    y = this.wrapText(ctx, "技能：" + (c.skillName || "") + (c.skillDesc ? " - " + c.skillDesc : ""), W / 2, y, cw - 100, 34, 2);
 
-    // 简介 / 台词
-    y += 56;
+    // 简介（最多 2 行）/ 台词（最多 2 行）
+    y += 52;
     ctx.fillStyle = "#cbd5e1"; ctx.font = "26px sans-serif";
-    y = this.wrapText(ctx, c.desc || "", W / 2, y, cw - 120, 38, 3);
+    y = this.wrapText(ctx, c.desc || "", W / 2, y, cw - 100, 38, 2);
     if (c.quote) {
-      y += 60;
+      y += 58;
       ctx.fillStyle = col.main; ctx.font = "italic 28px sans-serif";
-      this.wrapText(ctx, "「" + c.quote + "」", W / 2, y, cw - 120, 38, 2);
+      this.wrapText(ctx, "「" + c.quote + "」", W / 2, y, cw - 100, 38, 2);
     }
 
     // 底部引导
