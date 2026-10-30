@@ -11,7 +11,7 @@ const CONFIG = {
 
   // ========== 以下仅【本地直连模式】使用，线上请保持为空 ==========
   DEEPSEEK_API_KEY: "",
-  DEEPSEEK_BASE: "https://api.deepseek.com",
+  DEEPSEEK_BASE: "https://api.scnet.cn/api/llm/v1",//https://api.deepseek.com
 
   TONGYI_API_KEY: "",
   TONGYI_BASE: "https://dashscope.aliyuncs.com/compatible-mode/v1",
