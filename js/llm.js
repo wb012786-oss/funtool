@@ -75,7 +75,7 @@ const LLM = {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${CONFIG.DEEPSEEK_API_KEY}` },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "DeepSeek-V4.1-Flash-1017",
         messages: [
           { role: "system", content: "你只返回合法 JSON，不要任何解释。" },
           { role: "user", content: prompt }
